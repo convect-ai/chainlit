@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { useFormik } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { toast } from 'sonner';
 import * as yup from 'yup';
@@ -22,6 +23,19 @@ export default function Env() {
   const layoutMaxWidth = useLayoutMaxWidth();
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if(!!location && !!location.search) {
+      const params = new URLSearchParams(location.search)
+      const paramsData = Object.fromEntries(params)
+      if(Object.keys(paramsData).length > 0) {
+        localStorage.setItem('userEnv', JSON.stringify(paramsData));
+        setUserEnv(paramsData);
+        navigate('/');
+      }
+    }
+  }, [location]);
 
   const { t } = useTranslation();
 
